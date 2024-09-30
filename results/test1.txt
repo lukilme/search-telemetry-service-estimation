@@ -1,0 +1,23 @@
+concat_param = mean
+features = all swithes
+train_test_split = {
+    test_size=0.20,
+    random_state=42
+}
+param_grid = {
+        'n_estimators': [100, 200],
+        'max_depth': [20, 40],
+        'min_samples_split': [2, 4],
+        'min_samples_leaf': [1, 2],
+        'bootstrap': [True],
+        'max_features': ['sqrt']
+    }
+Melhores hiperparâmetros: {'bootstrap': True, 'max_depth': 40, 
+'max_features': 'sqrt', 'min_samples_leaf': 2, 'min_samples_split': 2, 
+'n_estimators': 200}
+NMAE=28.1170%
+[0.0852682  0.09072726 0.08952341 0.05958117 0.00066744 0.03706449
+ 0.0007014  0.08804308 0.08582413 0.06282815 0.02356876 0.03657372
+ 0.02048244 0.08381867 0.08631549 0.06174413 0.02590399 0.03662505
+ 0.02473902]
+======================================================================
