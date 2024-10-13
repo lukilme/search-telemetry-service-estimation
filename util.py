@@ -38,6 +38,7 @@ def get_data_concated(data_log, data_dash):
   )
 
   #fill in the empty space with the column measurement
+  #removeSameValuedAttr
   for index in result_total.columns:
     media = result_total[index].mean()
     result_total[index] = result_total[index].fillna(media)
