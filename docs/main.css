@@ -24,6 +24,9 @@ body {
 li{
     margin-left:20px;
 }
+p{
+    font-weight: 500;
+}
 a{
     color:blue;
 }
