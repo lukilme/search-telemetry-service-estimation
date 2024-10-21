@@ -23,39 +23,48 @@ def get_data_frames():
     return data_log, data_dash
 
 
-def get_data_concated(data_log, data_dash):
-    # Remover colunas constante
+def get_data_concated(data_log , data_dash ):
     for colum in data_log.columns:
         if(data_log[colum].std() == 0.0):
             data_log = data_log.drop(columns=[colum])
 
-    # Agrupar por 'timestamp' e calcular a média
     data_log = data_log.groupby("timestamp").mean().reset_index()
 
-    # Concatenar os dataframes
     result_total = pd.concat(
         [data_log.set_index("timestamp"), data_dash.set_index("timestamp")],
         axis=1,
         join="outer"
     )
-    # Preencher valores nulos com a média de cada coluna
     result_total = result_total.fillna(result_total.mean())
 
-    # Remover outliers com base no Z-score
     z_scores = np.abs(stats.zscore(result_total['framesDisplayedCalc']))
     threshold = 3
     result_total = result_total[(z_scores < threshold)]
 
-    # Extrair os labels
     labels = result_total['framesDisplayedCalc']
 
-    # Remover colunas do data_dash
     columns_to_remove = list(data_dash.columns)
     columns_to_remove.remove('timestamp')
     result_total = result_total.drop(columns=columns_to_remove)
     
     return result_total, labels
 
+def get_data_merged(data_log : pd.DataFrame, data_dash : pd.DataFrame):
+    for colum in data_log.columns:
+        if(data_log[colum].std() == 0.0):
+            data_log = data_log.drop(columns=[colum])
+    result_total = pd.merge(data_log, data_dash, on='timestamp', how='left')
+    result_total = result_total.fillna(result_total.mean())
+    z_scores = np.abs(stats.zscore(result_total['framesDisplayedCalc']))
+    threshold = 3
+    result_total = result_total[(z_scores < threshold)]
+    labels = result_total['framesDisplayedCalc']
+
+    columns_to_remove = list(data_dash.columns)
+    columns_to_remove.remove('timestamp')
+    result_total = result_total.drop(columns=columns_to_remove)
+    
+    return result_total, labels
 
 def alert_end():
     from plyer import notification
