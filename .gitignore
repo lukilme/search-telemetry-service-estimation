@@ -1,0 +1,9 @@
+.ipynb_checkpoints
+.env
+__pycache__
+activate.sh
+.mypy_cache
+index.html
+nosleep
+backup
+part2
