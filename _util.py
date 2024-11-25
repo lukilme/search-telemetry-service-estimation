@@ -342,3 +342,106 @@ def default_rf_model_randomsearch(
     print(f"Importâncias das features: {feature_importances}")
 
     return mae_rf, nmae_rf, best_rf_model, best_params
+
+
+def remove_useless_attribute(dataset):
+    dataset.drop(columns=dataset.columns[dataset.nunique() == 1], inplace=True)
+    return dataset
+
+def remove_outlier_IQR(df):
+    Q1 = df.quantile(0.25)
+    Q3 = df.quantile(0.75)
+    IQR = Q3 - Q1
+    df_final = df[~((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR)))]
+    return df_final
+
+def change_NaN_to_mean(dataset):
+    dataset = dataset.fillna(dataset.mean())
+    return dataset
+
+
+def normalization(X):
+    scaler = StandardScaler().fit(X)
+    X = scaler.transform(X)
+    return X
+
+def merge_dataset(data_log, data_dash):
+    data_log = remove_useless_attribute(data_log)
+
+    data_dash['timestamp'] = data_dash['timestamp'].astype(str).str[:10].astype(int)
+    total = data_log.merge(data_dash, on=['timestamp', 'timestamp'], how='left')
+    
+    total = remove_outlier_IQR(total)
+    total = change_NaN_to_mean(total)
+    features = total.iloc[:,1:len(data_log.columns)].values
+    labels = total['framesDisplayedCalc'].values
+
+    features = normalization(features)
+
+    return features, labels
+
+def visualize_results(feature_importances, feature_names):
+
+    feature_importances_df = pd.DataFrame({
+        'Features': feature_names,
+        'Importância': feature_importances
+    }).sort_values(by='Importância', ascending=False)
+
+    plt.figure(figsize=(10, 5))
+    sns.barplot(x='Importância', y='Features', data=feature_importances_df)
+    plt.title('Importância das Features')
+    plt.xlabel('Importância')
+    plt.ylabel('Features')
+    plt.show()
+
+def nmae(y_true, y_pred):
+    nmae_value = mean_absolute_error(y_true, y_pred) / np.mean(y_true)
+    return nmae_value
+
+def default_random_forest_model(
+    features: pd.DataFrame, labels: pd.Series, model_params: rf_model_params
+):
+
+    X_train, X_validation, y_train, y_validation = train_test_split(
+        features,
+        labels,
+        test_size=model_params.test_size,
+        random_state=model_params.random_state,
+        shuffle=model_params.shuffle
+    )
+
+    X_train_scaled = X_train
+    X_validation_scaled = X_validation
+
+    rf_model = RandomForestRegressor(
+        n_estimators=model_params.n_estimators,
+        max_depth=model_params.max_depth,
+        min_samples_split=model_params.min_samples_split,
+        min_samples_leaf=model_params.min_samples_leaf,
+        bootstrap=model_params.bootstrap,
+        verbose=model_params.verbose,
+        max_features=model_params.max_features,
+        n_jobs=model_params.n_jobs,
+        random_state=model_params.random_state,
+    )
+
+    mae_scorer = make_scorer(nmae, greater_is_better=False)
+
+    kf = KFold(
+        n_splits=model_params.n_splits,
+        shuffle=model_params.shuffle,
+    )
+
+    cross_val_scores = cross_val_score(
+        rf_model, X_train_scaled, y_train, cv=kf, scoring=mae_scorer
+    )
+
+    avg_cross_val_score = np.mean(cross_val_scores)
+
+    rf_model.fit(X_train_scaled, y_train)
+    
+    predictions = rf_model.predict(X_validation_scaled)
+    mae_rf = mean_absolute_error(y_validation, predictions)
+    nmae_rf = nmae(y_validation, predictions)
+
+    return mae_rf, nmae_rf, rf_model
