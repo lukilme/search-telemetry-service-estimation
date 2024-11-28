@@ -22,9 +22,9 @@ from sklearn.model_selection import (
 
 
 def default_random_forest_model(
-    features: pd.DataFrame, labels: pd.Series, model_params: rf_model_params
+    features: pd.DataFrame, labels: pd.Series, model_params
 ):
-
+    # Divisão de treino e validação
     X_train, X_validation, y_train, y_validation = train_test_split(
         features,
         labels,
@@ -33,9 +33,11 @@ def default_random_forest_model(
         shuffle=model_params.shuffle,
     )
 
+    # Padronização (se necessário)
     X_train_scaled = X_train
     X_validation_scaled = X_validation
 
+    # Definição do modelo
     rf_model = RandomForestRegressor(
         n_estimators=model_params.n_estimators,
         max_depth=model_params.max_depth,
@@ -48,26 +50,38 @@ def default_random_forest_model(
         random_state=model_params.random_state,
     )
 
-    mae_scorer = make_scorer(nmae, greater_is_better=False)
+    # Definição do scorer para NMAE
+    nmae_scorer = make_scorer(nmae, greater_is_better=False)
 
-    kf = KFold(
-        n_splits=model_params.n_splits,
-        shuffle=model_params.shuffle,
-    )
-
+    # K-Fold
+    if(model_params.shuffle):
+        kf = KFold(
+            n_splits=model_params.n_splits,
+            shuffle=model_params.shuffle,
+            random_state=model_params.random_state,
+        )
+    else:
+        kf = KFold(
+            n_splits=model_params.n_splits,
+            shuffle=model_params.shuffle,
+        )
+    # Cross-Validation
     cross_val_scores = cross_val_score(
-        rf_model, X_train_scaled, y_train, cv=kf, scoring=mae_scorer
+        rf_model, X_train_scaled, y_train, cv=kf, scoring=nmae_scorer
     )
 
     avg_cross_val_score = np.mean(cross_val_scores)
 
+
     rf_model.fit(X_train_scaled, y_train)
 
+    # Previsões
     predictions = rf_model.predict(X_validation_scaled)
     mae_rf = mean_absolute_error(y_validation, predictions)
     nmae_rf = nmae(y_validation, predictions)
 
     return mae_rf, nmae_rf, rf_model
+
 
 
 def default_rf_model_randomsearch(
