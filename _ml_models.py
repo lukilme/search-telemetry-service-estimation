@@ -83,7 +83,6 @@ def default_random_forest_model(
     return mae_rf, nmae_rf, rf_model
 
 
-
 def default_rf_model_randomsearch(
     features_train: pd.DataFrame, labels_train: pd.Series, iter_n=50
 ) -> Tuple[float, float, RandomForestRegressor, np.ndarray]:

@@ -19,9 +19,14 @@ from sklearn.model_selection import (
     RandomizedSearchCV,
 )
 def nmae(y_true, y_pred):
-    y_true = np.array(y_true, dtype=float) 
-    y_pred = np.array(y_pred, dtype=float)  
-    return np.mean(np.abs(y_true - y_pred) / y_true)
+    mae = mean_absolute_error(y_true, y_pred)
+    nmae_value = mae / np.mean(y_true)
+    return nmae_value
+
+def nrmse(y_true, y_pred):
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    nrmse_value = rmse / np.mean(y_true)
+    return nrmse_value
 
 def get_datasets(dataset_name="sinusoid") -> Tuple[pd.DataFrame, pd.DataFrame]:
     source_data = "sinusoid_8h"
