@@ -33,7 +33,7 @@ def default_random_forest_model(
         shuffle=model_params.shuffle,
     )
 
-    # Padronização (se necessário)
+   
     X_train_scaled = X_train
     X_validation_scaled = X_validation
 

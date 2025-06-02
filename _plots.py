@@ -3,7 +3,6 @@ from typing import Tuple
 import numpy as np
 import matplotlib as plot
 from scipy import stats
-import mypy
 from sklearn.metrics import mean_absolute_error
 import matplotlib.pyplot as plt
 import sympy as sp
