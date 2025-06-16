@@ -1,0 +1,18 @@
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Melhores hiperparâmetros: {'n_estimators': 40, 'min_samples_split': 5, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 100, 'bootstrap': False}
+Importâncias das features: [0.09980763 0.11891127 0.1012863  0.08038483 0.0001497  0.0025339
+ 0.00014655 0.10941128 0.11332805 0.07956326 0.00061202 0.00244406
+ 0.00043238 0.10346298 0.10374254 0.0798051  0.00076688 0.0025779
+ 0.00063338]
+MAE: 0.6137641970058453
+NMAE: 0.030921719152792456
+
+Melhores hiperparâmetros: RandomForestRegressor(bootstrap=False, max_depth=100, max_features='sqrt',
+                      min_samples_split=5, n_estimators=40, n_jobs=2,
+                      random_state=42)
+
+Importâncias das features: [0.09980763 0.11891127 0.1012863  0.08038483 0.0001497  0.0025339
+ 0.00014655 0.10941128 0.11332805 0.07956326 0.00061202 0.00244406
+ 0.00043238 0.10346298 0.10374254 0.0798051  0.00076688 0.0025779
+ 0.00063338]
+
