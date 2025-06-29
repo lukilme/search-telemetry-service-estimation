@@ -274,10 +274,7 @@ def merge_datasets(
     return features_normalized, labels, scaler
 
 
-# Classe utilitária para pipeline completo
 class INTDataProcessor:
-    """Classe para processamento completo dos dados INT."""
-    
     def __init__(self):
         self.scaler = None
         self.processed_data = None
@@ -304,7 +301,6 @@ class INTDataProcessor:
             data_log = remove_outliers_iqr(data_log)
             data_dash = remove_outliers_iqr(data_dash)
         
-        # 3. Merge e normalização
         features, labels, self.scaler = merge_datasets(data_log, data_dash, join_type)
         
         self.processed_data = (features, labels)
