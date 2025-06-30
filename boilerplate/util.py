@@ -261,12 +261,12 @@ def merge_datasets(
     if final_rows < initial_rows:
         logger.info(f"Removidas {initial_rows - final_rows} linhas com NaN após merge")
     
-    # Extrai features (exclui timestamp e target)
-    feature_end_idx = len(data_log.columns) - 1  # -1 para excluir timestamp
+   
+    feature_end_idx = len(data_log.columns) - 1  
     features = total.iloc[:, 1:feature_end_idx + 1].values
     labels = total['framesDisplayedCalc'].values
     
-    # Normaliza features
+
     features_normalized, scaler = normalize_features(features)
     
     logger.info(f"Dataset final: {len(total)} amostras, {features.shape[1]} features")
